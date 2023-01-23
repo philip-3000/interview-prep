@@ -52,20 +52,20 @@ func main() {
 	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
 
 	// (2 + 7) => [0, 1] 
-    arr = []int{2,7,11,15}
-    target = 9
+	arr = []int{2,7,11,15}
+	target = 9
 	indices = twoSum(arr, target)
 	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
 
 	// (3 + 5) => [3, 5] 
-    arr = []int{0,1,2,3,4,5}
-    target = 8
+	arr = []int{0,1,2,3,4,5}
+	target = 8
 	indices = twoSum(arr, target)
 	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
 
 	// (-2 + 6) => [2, 3] 
-    arr = []int{0,1,-2,6,4,5}
-    target = 4
+	arr = []int{0,1,-2,6,4,5}
+	target = 4
 	indices = twoSum(arr, target)
 	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
 }
