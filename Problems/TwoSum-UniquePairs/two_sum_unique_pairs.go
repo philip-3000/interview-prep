@@ -1,3 +1,17 @@
+/*
+Given an array of integers, nums, and an integer, target, find the number of unique pairs in the array
+such that their sum is equal to the targetr target. Return the number of pairs.
+
+Example:
+
+Input: nums = [1,2,3,4], target = 6
+output: 2
+
+Explanation: 
+2 + 4 = 6
+
+*/
+
 package main
 
 import "fmt"
@@ -66,15 +80,15 @@ func main() {
 	fmt.Printf("Input: %v\nTarget: %d\nUnique Pairs: %d\n\n", arr, target, uniquePairs)
 
 	// no solutions: 
-    arr = []int{1, 1, 2, 45, 46, 46}
-    target = 42
+	arr = []int{1, 1, 2, 45, 46, 46}
+	target = 42
 	uniquePairs = twoSumUniquePairs(arr, target)
 	fmt.Printf("Input: %v\nTarget: %d\nUnique Pairs: %d\n\n", arr, target, uniquePairs)
 
 	// 1 solution:
 	//		-2 + 44
 	arr = []int{0, 4, 44, -2}
-    target = 42
+	target = 42
 	uniquePairs = twoSumUniquePairs(arr, target)
 	fmt.Printf("Input: %v\nTarget: %d\nUnique Pairs: %d\n\n", arr, target, uniquePairs)
 
