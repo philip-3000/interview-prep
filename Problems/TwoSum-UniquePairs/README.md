@@ -78,6 +78,8 @@ def two_sum_take_1(nums:List[int], target:int)->List[int]:
 
 And, just as before, we can improve upon the nested loops. Just like in the standard [two sum](../TwoSum/README.md), we were able to incorporate a map to look up the 'compliment' value.  This time, we don't even need the index of the compliment value - we just need to know if the compliment value has been seen or exists. 
 
-With that, we can now adapt our optimized two sum solution by incorporating the changes we made to our brute force solution.
+With that, we can now adapt our optimized two sum solution by incorporating the changes we made to our brute force solution:
+- [python](two_sum_unique_pairs.py)
+- [go](two_sum_unique_pairs.go)
 
 

@@ -45,4 +45,6 @@ I originally thought you needed to do this in two passes, i.e. first populate th
 
 ![Two Sum - Lookups](https://drive.google.com/uc?export=view&id=1aRuaio71HLMVMPg5Z6P7pQbamzGtu8B0)
 
-Notice how at each index, we're attempting to look up the compliment value.  We add in the values that we encounter in each iteration of the loop, after we check to see if we can find the compliment value. With that, we can pretty much arrive at the solutions.
+Notice how at each index, we're attempting to look up the compliment value.  We add in the values that we encounter in each iteration of the loop, after we check to see if we can find the compliment value. With that, we can pretty much arrive at the solutions:
+- [python](two_sum.py)
+- [go](two_sum.go)
