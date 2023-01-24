@@ -4,6 +4,12 @@ From [leetcode](https://leetcode.com/problems/two-sum/description/):
 > Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.
 You can return the answer in any order.
 
+# Hints
+This problem can be solved in various ways. Consider:
+- start with the 'slowest' way first. This is the most intuitive.
+- is there a way to speed it up? Given an integer x, can you rewrite x + y = target in order to look up the other value y?
+- what can we use to do this look up quickly?
+
 # Intuition
 This is a pretty common problem that has a several of variations (e.g. 3 Sum, Two Sum Sorted, etc), so, it's a good place to start. Intuitively, we want to move through the array to find two numbers that add up to the target value. Let's try this for the following parameters:
 
@@ -39,4 +45,4 @@ I originally thought you needed to do this in two passes, i.e. first populate th
 
 ![Two Sum - Lookups](https://drive.google.com/uc?export=view&id=1aRuaio71HLMVMPg5Z6P7pQbamzGtu8B0)
 
-Notice how at each index, we're attempting to look up the compliment value.  We add in the values that we encounter in each iteration of the loop, after we check to see if we can find the compliment value.  
+Notice how at each index, we're attempting to look up the compliment value.  We add in the values that we encounter in each iteration of the loop, after we check to see if we can find the compliment value. With that, we can pretty much arrive at the solutions.
