@@ -1,6 +1,6 @@
 /*
 Given an array of integers, nums, and an integer, target, find the number of unique pairs in the array
-such that their sum is equal to the targetr target. Return the number of pairs.
+such that their sum is equal to the target. Return the number of pairs.
 
 Example:
 
@@ -14,7 +14,22 @@ Explanation:
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"encoding/json"
+    "io/ioutil"
+	"log"
+)
+
+type TestCase struct {
+	Input []int
+	Target int
+	Expected int
+	Comment string
+}
+type TestCases struct {
+	Tests []TestCase
+}
 
 // A set like structure of integers.
 type IntSet map[int]struct{}
@@ -63,33 +78,24 @@ func twoSumUniquePairs(nums []int, target int) int {
 } 
 
 func main() {
-	
-	// 2 Solutions:
-	// 		2 + 3
-	// 		1 + 4
-	arr := []int{1, 2, 3, 4, 5}
-	target := 5
-	uniquePairs := twoSumUniquePairs(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nUnique Pairs: %d\n\n", arr, target, uniquePairs)
+	content, err := ioutil.ReadFile("./test_cases.json")
+    if err != nil {
+        log.Fatal("Error when opening file: ", err)
+    }
 
-	// 1 Solution:
-	// 		2 + 2
-	arr = []int{2, 2, 2, 2, 2}
-	target = 4
-	uniquePairs = twoSumUniquePairs(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nUnique Pairs: %d\n\n", arr, target, uniquePairs)
+	var testCases TestCases
+    err = json.Unmarshal(content, &testCases)
+    if err != nil {
+        log.Fatal("Error during Unmarshal(): ", err)
+		
+    }
 
-	// no solutions: 
-	arr = []int{1, 1, 2, 45, 46, 46}
-	target = 42
-	uniquePairs = twoSumUniquePairs(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nUnique Pairs: %d\n\n", arr, target, uniquePairs)
-
-	// 1 solution:
-	//		-2 + 44
-	arr = []int{0, 4, 44, -2}
-	target = 42
-	uniquePairs = twoSumUniquePairs(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nUnique Pairs: %d\n\n", arr, target, uniquePairs)
-
+	for _, test := range testCases.Tests {
+		var input = test.Input
+		var target = test.Target
+		var expected = test.Expected
+		var closestSum = twoSumUniquePairs(input, target)
+		var passed = (closestSum == expected)
+		fmt.Printf("Input: %v\nTarget: %d\nResult: %d\nExpected: %d\nPassed: %v\n\n", input, target, closestSum, expected, passed)
+	}
 }

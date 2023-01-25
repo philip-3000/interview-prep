@@ -1,0 +1,36 @@
+{
+    "tests" : [
+        {
+            "input"     : [],
+            "target"    : 60,
+            "expected"  : 0,
+            "comment"   : "There are no pairs that can add up to the target value."
+        },
+        {
+            "input"     : [2,2,2,2],
+            "target"    : 4,
+            "expected"  : 1,
+            "comment"   : "There are 6 repeated pairs of (2, 2), but, only 1 unique pair."
+        },
+        {
+            "input"     : [1, 1, 2, 45, 46, 46],
+            "target"    : 47,
+            "expected"  : 2,
+            "comment"   : "2 unique solutions: 1 + 46, 2 + 45"
+        },
+        {
+            "input"     : [1, 1, 2, 45, 46, 46],
+            "target"    : 42,
+            "expected"  : 0,
+            "comment"   : "No pairs add up to 42"
+        },
+        {
+            "input"     : [0, 4, 44, -2],
+            "target"    : 42,
+            "expected"  : 1,
+            "comment"   : "One solution: -2 + 44"
+        }
+    ]
+
+
+}

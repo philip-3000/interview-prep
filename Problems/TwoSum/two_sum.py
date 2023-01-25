@@ -16,6 +16,7 @@ nums[0] + nums[1] = 9
 """
 
 from typing import List
+import json
 
 def two_sum(nums:List[int], target:int)->List[int]:
     # we can use a map, where the key is the value of the element in the array, which we'll map to the
@@ -37,24 +38,13 @@ def two_sum(nums:List[int], target:int)->List[int]:
 
     
 if __name__ == "__main__":
-
-    # (2 + 7) => [0, 1] 
-    input = [2,7,11,15]
-    target = 9
-    indices = two_sum(nums = input, target=target)
-    print(f"Input: {input}\nTarget: {target}\nIndices: {indices}\n")
-
-
-    # (3 + 5) => [3, 5] 
-    input = [0,1,2,3,4,5]
-    target = 8
-    indices = two_sum(nums = input, target=target)
-    print(f"Input: {input}\nTarget: {target}\nIndices: {indices}\n")
-
-
-    # (-2 + 6) => [2, 3] 
-    input = [0,1,-2,6,4,5]
-    target = 4
-    indices = two_sum(nums = input, target=target)
-    print(f"Input: {input}\nTarget: {target}\nIndices: {indices}\n")
-  
+    with open("test_cases.json", mode='r', encoding="utf-8-sig") as file:
+        text = file.read() 
+        test_cases = json.loads(text)
+        for test in test_cases['tests']:
+            input = test['input']
+            target = test['target']
+            expected = test['expected']
+            result = two_sum(nums=input, target=target)
+            passed = expected.sort() == result.sort()
+            print(f"Input:{input}\nTarget: {target}\nResult: {result}\nExpected: {expected}\nPassed: {passed}\n\n")

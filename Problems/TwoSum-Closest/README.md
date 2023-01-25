@@ -73,14 +73,14 @@ One thing to note is that it's already sorted.  What if we were to use a left an
 Now, our solution is able to hone in on the answer with just 1 loop, which should cut down the time complexity. The sort will take on average O(nlogn) - whether it uses more space or not is up to the underlying sort algorithm.  Our loop will not add to the overall time complexity, and does not really use any extra space
 
 # Run the Solutions
-Feel free to try more test cases by adding them to [test_cases.json](test_cases.json).  
+The test cases are in [test_cases.json](test_cases.json). Feel free to add more test cases in. 
 
 For Python:
 ```shell
 python3 two_sum_closest.py
 ```
 
-In Go:
+For Go:
 ```shell
 go run two_sum_closest.go
 ```

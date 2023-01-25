@@ -50,3 +50,16 @@ Notice how at each index, we're attempting to look up the compliment value.  We 
 - [go](two_sum.go)
 
 Our more optimized solutions traded space for time complexity.  Now, the algorithm runs in O(n) and uses O(n) space.  
+
+# Run the Solutions
+The test cases are in [test_cases.json](test_cases.json). Feel free to add more test cases in. 
+
+For Python:
+```shell
+python3 two_sum.py
+```
+
+For Go:
+```shell
+go run two_sum.go
+```

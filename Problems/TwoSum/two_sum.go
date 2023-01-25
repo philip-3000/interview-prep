@@ -17,7 +17,23 @@ nums[0] + nums[1] = 9
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+	"encoding/json"
+    "io/ioutil"
+	"log"
+)
+
+type TestCase struct {
+	Input []int
+	Target int
+	Expected []int
+	Comment string
+}
+type TestCases struct {
+	Tests []TestCase
+}
 
 
 func twoSum(nums []int, target int) []int {
@@ -42,31 +58,44 @@ func twoSum(nums []int, target int) []int {
 	return []int{}
 }
 
+func testEq(a []int, b []int) bool {
+    if len(a) != len(b) {
+        return false
+    }
+	sort.Ints(a)
+	sort.Ints(b)
+
+	
+    for i := range a {
+        if a[i] != b[i] {
+            return false
+        }
+    }
+    return true
+}
+
 func main() {
-	fmt.Printf("hello")
+	content, err := ioutil.ReadFile("./test_cases.json")
+    if err != nil {
+        log.Fatal("Error when opening file: ", err)
+    }
 
-	// -2 + 44 => [2, 3]
-	arr := []int{0, 4, 44, -2}
-	target := 42
-	indices := twoSum(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
+	var testCases TestCases
+    err = json.Unmarshal(content, &testCases)
+    if err != nil {
+        log.Fatal("Error during Unmarshal(): ", err)
+		
+    }
 
-	// (2 + 7) => [0, 1] 
-	arr = []int{2,7,11,15}
-	target = 9
-	indices = twoSum(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
-
-	// (3 + 5) => [3, 5] 
-	arr = []int{0,1,2,3,4,5}
-	target = 8
-	indices = twoSum(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
-
-	// (-2 + 6) => [2, 3] 
-	arr = []int{0,1,-2,6,4,5}
-	target = 4
-	indices = twoSum(arr, target)
-	fmt.Printf("Input: %v\nTarget: %d\nIndices: %v\n\n", arr, target, indices)
+	for _, test := range testCases.Tests {
+		var input = test.Input
+		var target = test.Target
+		var expected = test.Expected
+		var indices = twoSum(input, target)
+		
+		// a bit more work here for Go
+		var passed = testEq(indices, expected)
+		fmt.Printf("Input: %v\nTarget: %d\nResult: %d\nExpected: %d\nPassed: %v\n\n", input, target, indices, expected, passed)
+	}
 }
 

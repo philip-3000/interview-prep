@@ -84,4 +84,17 @@ With that, we can now adapt our optimized two sum solution by incorporating the 
 
 Again, like for the regular two sum problem, our optimized solutions traded space for time complexity.  Now, the algorithm runs in O(n) and uses O(n) space.
 
+# Run the Solutions
+The test cases are in [test_cases.json](test_cases.json). Feel free to add more test cases in.
+
+From the current directory, for Python:
+```shell
+python two_sum_unique_pairs.py
+```
+and for Go:
+```shell
+go run two_sum_unique_pairs.go
+```
+
+
 
