@@ -32,7 +32,7 @@ Let's pretend we're the interviewer, and let's make some assumptions:
 
 Great, with that in mind, let's see if we can figure out how to approach this problem. We can try starting where we did with the standard two sum value, which was with comparing all pairs. This time, we not only need to compare the sum of the pairs, but we need to ask how close that sum is to the target value:
 
-![Two Sum - Lookups](https://drive.google.com/uc?export=view&id=1O5PulYSSFYBHxbjp0qPoKK8b8ZQCbcjM)
+![Two Sum Closests - All Pairs](https://drive.google.com/uc?export=view&id=1O5PulYSSFYBHxbjp0qPoKK8b8ZQCbcjM)
 
 For the above example, we saw that the two numbers that summed closest to 10 were 4 and 5.  Two things to note from the graphic:
 - I only updated the smallest difference when we actually find one less than the current smallest difference. 
@@ -68,8 +68,9 @@ What if we tried considering two pairs at a time?  In our previous example, we h
 [1,2,3,4,5]
 ```
 One thing to note is that it's already sorted.  What if we were to use a left and a right pointer? This gives us a pair to consider, namely (input[left], input[right]), and this way, we can control how big our sum gets by moving the left and the right pointers in a particular direction rather looping through all possible pairs. That is, if we want to try making the sum closer, we would consider a smaller number if the sum was bigger than the target; that is, we'd move our right pointer to the left.  If we need to make our sum bigger as it's smaller than the target, we could consider a bigger number; that is, we'd move our left pointer to the right.
+![Two Sum Closests - Two Pointer Approach](https://drive.google.com/uc?export=view&id=1Knjsi3LBVgT-0Y-BjyCvXJszA6KiZZZ4)
 
-Now, our solution is able to 
+Now, our solution is able to hone in on the answer with just 1 loop, which should cut down the time complexity. The sort will take on average O(nlogn) - whether it uses more space or not is up to the underlying sort algorithm.  Our loop will not add to the overall time complexity, and does not really use any extra space
 
 # Run the Solutions
 Feel free to try more test cases by adding them to [test_cases.json](test_cases.json).  
