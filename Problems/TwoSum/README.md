@@ -48,3 +48,5 @@ I originally thought you needed to do this in two passes, i.e. first populate th
 Notice how at each index, we're attempting to look up the compliment value.  We add in the values that we encounter in each iteration of the loop, after we check to see if we can find the compliment value. With that, we can pretty much arrive at the solutions:
 - [python](two_sum.py)
 - [go](two_sum.go)
+
+Our more optimized solutions traded space for time complexity.  Now, the algorithm runs in O(n) and uses O(n) space.  
