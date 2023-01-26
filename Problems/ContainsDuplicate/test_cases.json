@@ -1,0 +1,24 @@
+{
+    "tests" : [
+        {
+            "input"     : [1,2,3,4],
+            "expected"  : false,
+            "comment"   : "All values are unique"
+        },
+        {
+            "input"     : [1],
+            "expected"  : false,
+            "comment"   : "One value present, so, must be unique."
+        },
+        {
+            "input"     : [1,2,3,4,3],
+            "expected"  : true,
+            "comment"   : "The value 3 appears twice."
+        },
+        {
+            "input"     : [1,2,1,1,1,1],
+            "expected"  : true,
+            "comment"   : "The value 1 appears multiple times."
+        }
+    ]
+}
