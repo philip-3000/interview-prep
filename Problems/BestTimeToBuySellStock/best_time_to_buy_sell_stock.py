@@ -1,5 +1,17 @@
+"""
+You are given an array prices where prices[i] is the price of a given stock on the ith day. 
+You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
+Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
+
+Example:
+prices = [7,1,5,3,6,4]
+Output: 5
+Explanation: If you buy on day 2 at 1 and sell on day 5 at 6, that's 6-1 = 5 in profit. That's the maximum profit you can make given the input data.
+"""
+
 from typing import List
-import json 
+import json
+
 
 def buy_sell_stock(prices:List[int])->int:
     max_profit = 0
