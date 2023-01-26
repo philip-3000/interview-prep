@@ -1,0 +1,24 @@
+{
+    "tests" : [
+        {
+            "input"     : [34,23,1,24,75,33,57,8],
+            "expected"  : 74,
+            "comment"   : "Buy at 1 and sell at 75"
+        },
+        {
+            "input"     : [5,4,3,2,1],
+            "expected"  : 0,
+            "comment"   : "Price decreases each day."
+        },
+        {
+            "input"     : [7,1,5,3,6,4],
+            "expected"  : 5,
+            "comment"   : "Buy at 1 and sell at 6"
+        },
+        {
+            "input"     : [7, 8, 1, 7],
+            "expected"  : 6,
+            "comment"   : "Buy at 1 and sell at 7"
+        }
+    ]
+}

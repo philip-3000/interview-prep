@@ -19,7 +19,7 @@ If you haven't already, try the standard [two sum](../TwoSum/README.md) problem 
 - can we hash map our way to finding the compliment value?
 - can we inch closer to our answer instead?
 
-# Intuition
+# Approach
 One thing to note is that the problem description doesn't really have any constraints. For example, we could ask:
 - can the 'closest sum' be bigger than the target value? Or does it have to be strictly less than the target?
 - if so, are we guarunteed it exists?

@@ -27,7 +27,7 @@ The key part of this question is about finding the **unique** solutions. Things 
 - how do we find the two numbers that add up to target? We may have [seen](../TwoSum/README.md) this before.
 - Is there a way we could look up if we've already seen a solution (and preferably look it up quickly)?
 
-# Intuition
+# Approach
 If you haven't seen the standard [two sum](../TwoSum/README.md) problem yet, definitely check that out first.  The idea here is the same but with a small twist. Note that the problem description asks for the number of **unique** solutions.  Suppose we had the following array of numbers and target value:
 
 ```python

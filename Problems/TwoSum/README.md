@@ -10,7 +10,7 @@ This problem can be solved in various ways. Consider:
 - is there a way to speed it up? Given an integer x, can you rewrite x + y = target in order to look up the other value y?
 - what can we use to do this look up quickly?
 
-# Intuition
+# Approach
 This is a pretty common problem that has a several of variations (e.g. 3 Sum, Two Sum Sorted, etc), so, it's a good place to start. Intuitively, we want to move through the array to find two numbers that add up to the target value. Let's try this for the following parameters:
 
 ```python
