@@ -146,16 +146,21 @@ Index 4:
 [120, 60, 40, 30, 24]
 ```
 We notice something kind of interesting happened.  We can see that at each index, left and right consist of all the numbers in the array, except at the actual index 'i'. And when we multiply them together, we get the same numbers as we do in our final output! We're on to something here. So, like in other problems we've seen, can we exchange space for efficiency here?  That is, is it possible to precalculate those left and right arrays first?  In particular, could we define a 'left' array where at each index, 'i', the values in left are the product of all the numbers in the array nums to the left of index 'i'?  Well, it turns out we can:
+
 ![Product of Array Except Self - Left Prefix Sum](https://drive.google.com/uc?export=view&id=15HnkmYUpD8Sj8OkT2Y6z-Y-nab5day2W)
+
 We can do a similar calculation/method for finding a 'right' array, where each element at index 'i' in 'right' is the product of all the numbers in the input array, nums, that are 'to the right' of index i (i.e. greater than i):
+
 ![Product of Array Except Self - Right Prefix Sum](https://drive.google.com/uc?export=view&id=10v-QHxDlah9bJ8tq1DB_XwY2MnM9i7jx)
+
 Now, from our code snippet above, we saw that at each index 'i' of our output, we multiplied the product of all the numbers in our 'left' array with the product of all the numbers in our 'right' array.  This is exactly the same as multiplying a value in left with a value in right at a particular index i:
+
 ![Product of Array Except Self - Right times Left](https://drive.google.com/uc?export=view&id=1XCGj1Cjh5EvY3B76fIiRroxpirc1-REn)
 
 We've finally arrived at a recipe for doing this without the division operator or nested loops.  We essentially need to:
 - use a loop to calculate the left prefix products array
-- another loop to calculate the right prefix products array
-- and a final loop to multiple each element of left with each element of right
+- use another loop to calculate the right prefix products array
+- and then a final loop to multiple each element of left with each element of right
 
 Our solution has 3 loops, each running in linear time.  We still consider this a linear time algorith, O(n).  For space, we ended up using 2 temporary arrays, but, still linear space complexity.  
 
