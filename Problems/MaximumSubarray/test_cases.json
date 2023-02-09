@@ -1,0 +1,29 @@
+{
+    "tests" : [
+        {
+            "input"     : [1,2,3],
+            "expected"  : 6,
+            "comment"   : "The max sum can be found by considering the entire array."
+        },
+        {
+            "input"     : [-2,-1,-3],
+            "expected"  : -1,
+            "comment"   : "All elements are negative; the more we add, the smaller the sum gets. Therefore, the largest sum turns out to the be the max element, just -1."
+        },
+        {
+            "input"     : [1, -2, 2, 5],
+            "expected"  : 7,
+            "comment"   : "The max subarray sum is from [2,5]."
+        },
+        {
+            "input"     : [3, -1, 1000, 2, 5],
+            "expected"  : 1009,
+            "comment"   : "The max subarray sum is just the entire array."
+        },
+        {
+            "input"     : [-2, 3, -1, 1000, 2, 5],
+            "expected"  : 1009,
+            "comment"   : "The max subarray sum is the subarray [3, -1, 1000, 2, 5] since the first element would reduce it."
+        }
+    ]
+}
