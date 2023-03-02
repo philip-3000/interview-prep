@@ -13,6 +13,12 @@ func TestConstruction(t *testing.T) {
 	}
 }
 
+// func TestCopying(t *testing.T) {
+// 	var list = []int {1,2,3}
+
+// 	list[i]
+// }
+
 func TestItemsIteration(t *testing.T) {
 	var pm = NewPhilipMap[int, int](10)
 	for i := 1; i <= 50; i++ {
@@ -30,6 +36,29 @@ func TestItemsIteration(t *testing.T) {
 		if !ok {
 			t.Fatalf("key was not in dictionary: %v", i)
 		}
+	}
+
+}
+
+func TestDelete(t *testing.T) {
+	var pm = NewPhilipMap[int, int](2)
+
+	for i := 0; i < 10; i += 1 {
+		pm.Put(i, i)
+	}
+
+	var previousLength = pm.Length()
+
+	pm.Delete(8)
+
+	ok, _ := pm.Get(8)
+
+	if ok {
+		t.Fatalf("key '8' should have been deleted.")
+	}
+
+	if previousLength != (pm.Length() + 1) {
+		t.Fatalf("Length not correct! Expected: %v, Actual: %v", previousLength-1, pm.Length())
 	}
 
 }
