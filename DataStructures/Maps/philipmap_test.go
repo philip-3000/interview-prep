@@ -4,8 +4,6 @@ import (
 	"testing"
 )
 
-// TestHelloName calls greetings.Hello with a name, checking
-// for a valid return value.
 func TestConstruction(t *testing.T) {
 
 	var pm = NewPhilipMap[int, int](10)
@@ -13,6 +11,27 @@ func TestConstruction(t *testing.T) {
 	if len(pm.storage) != 10 {
 		t.Fatalf("philipmap not instantiated properly")
 	}
+}
+
+func TestItemsIteration(t *testing.T) {
+	var pm = NewPhilipMap[int, int](10)
+	for i := 1; i <= 50; i++ {
+		pm.Put(i, i)
+	}
+
+	var builtInMap = map[int]int{}
+	for kvp := range pm.Items() {
+
+		builtInMap[kvp.Key] = kvp.Value
+	}
+
+	for i := 1; i <= 50; i++ {
+		_, ok := builtInMap[i]
+		if !ok {
+			t.Fatalf("key was not in dictionary: %v", i)
+		}
+	}
+
 }
 
 func TestPutGet(t *testing.T) {
