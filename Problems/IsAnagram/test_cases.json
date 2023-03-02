@@ -1,0 +1,34 @@
+{
+    "tests" : [
+        {
+            "s" : "cinema",
+            "t" : "iceman",
+            "expected" : true
+        },
+        {
+            "s" : "cat",
+            "t" : "act",
+            "expected" : true
+        },
+        {
+            "s" : "cat",
+            "t" : "caat",
+            "expected" : false
+        },
+        {
+            "s" : "cinema",
+            "t" : "camera",
+            "expected" : false
+        },
+        {
+            "s" : "aaabbb",
+            "t" : "ababab",
+            "expected" : true
+        },
+        {
+            "s" : "a",
+            "t" : "a",
+            "expected" : true
+        }
+    ]
+}
