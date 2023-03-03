@@ -2,6 +2,7 @@ package maps
 
 import (
 	"testing"
+	"go.uber.org/goleak"
 )
 
 func TestConstruction(t *testing.T) {
@@ -13,21 +14,18 @@ func TestConstruction(t *testing.T) {
 	}
 }
 
-// func TestCopying(t *testing.T) {
-// 	var list = []int {1,2,3}
-
-// 	list[i]
-// }
-
 func TestItemsIteration(t *testing.T) {
 	var pm = NewPhilipMap[int, int](10)
+	
+	// test for goroutine leaks
+	defer goleak.VerifyNone(t)
+
 	for i := 1; i <= 50; i++ {
 		pm.Put(i, i)
 	}
 
 	var builtInMap = map[int]int{}
 	for kvp := range pm.Items() {
-
 		builtInMap[kvp.Key] = kvp.Value
 	}
 
@@ -37,6 +35,17 @@ func TestItemsIteration(t *testing.T) {
 			t.Fatalf("key was not in dictionary: %v", i)
 		}
 	}
+
+	// what if we don't read all...shouldn't get a leak
+	var ctr = 0
+	for kvp := range pm.Items() {
+		ctr += 1
+		kvp.Value = 0
+		if ctr == 10 {
+			break
+		}
+	}
+
 
 }
 

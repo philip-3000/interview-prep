@@ -67,43 +67,43 @@ func (pm *PhilipMap[T, V]) Get(key T) (bool, V) {
 }
 
 /*
-	 Allows for ranging over key value pairs via a channel.
+Allows for ranging over key value pairs via a channel.
 
-	 Example:
-	 for kvp := pm.Items() {
-		fmt.Printf("(key, value) = ('%v', '%v')\n", kvp.Key, kvp.Value)
-	 }
+Example:
+
+for kvp := pm.Items() {
+	fmt.Printf("(key, value) = ('%v', '%v')\n", kvp.Key, kvp.Value)
+}
 */
 func (pm *PhilipMap[T, V]) Items() <-chan KeyValuePair[T, V] {
-	out := make(chan KeyValuePair[T, V])
+	// create a buffered channel the size of the total number of keys/values
+	out := make(chan KeyValuePair[T, V], pm.Length())
 	go func() {
+		// go through each bucket
 		var numberOfBuckets = len(pm.storage)
 		for idx := 0; idx < numberOfBuckets; idx += 1 {
-			//var currentBucket = &pm.storage_2[idx]
-			var bucketLength = len(pm.storage[idx]) // (*currentBucket))
+			// and publish the key value pairs, if any, in each bucket to the channel.
+			var bucketLength = len(pm.storage[idx])
 			for bucketIdx := 0; bucketIdx < bucketLength; bucketIdx += 1 {
-				var storedKvp = pm.storage[idx][bucketIdx] // &(*currentBucket)[bucketIdx]
+				var storedKvp = pm.storage[idx][bucketIdx]
 				out <- storedKvp
 			}
 		}
-		// for index := range pm.storage {
-		// 	for e := pm.storage[index].Front(); e != nil; e = e.Next() {
-		// 		var storedKvp = e.Value.(KeyValuePair[T, V])
-		// 		out <- storedKvp
-		// 	}
-		// }
-
+		
 		close(out)
 	}()
 
 	return out
 }
 
+/*
+Removes a key value pair specified by the key parameter, if found. 
+*/
 func (pm *PhilipMap[T, V]) Delete(key T) {
 	var index = calculateHashIndex(key, len(pm.storage))
 	for idx := 0; idx < len(pm.storage[index]); idx += 1 {
 		if pm.storage[index][idx].Key == key {
-			// if we find it, we have to manually do this. We don't care about the ordering.
+			// if we find it, we have to manually remove it. We don't care about the ordering.
 			// kind of annoying there isn't an easier way to do this...
 			pm.storage[index][idx] = pm.storage[index][len(pm.storage[index])-1]
 			pm.storage[index] = pm.storage[index][:len(pm.storage[index])-1]
@@ -120,9 +120,6 @@ func (pm *PhilipMap[T, V]) Put(key T, value V) {
 	var index = calculateHashIndex(key, len(pm.storage))
 
 	// we need to insert the key value pair, or, if it exists, update it.
-	var kvp = KeyValuePair[T, V]{Key: key, Value: value}
-
-	// Go makes a copy when you range over...
 	var currentBucketLength = len(pm.storage[index])
 	for idx := 0; idx < currentBucketLength; idx += 1 {
 		if pm.storage[index][idx].Key == key {
@@ -132,21 +129,10 @@ func (pm *PhilipMap[T, V]) Put(key T, value V) {
 		}
 	}
 
-	// append to the slice.
+	// append to the slice in this case.
+	var kvp = KeyValuePair[T, V]{Key: key, Value: value}
 	pm.storage[index] = append(pm.storage[index], kvp)
-	//fmt.Printf("Added (k,v) = (%v, %v) to new slot at index %v.\nBucket: %v\n", key, value, index, pm.storage_2)
 
-	// // Go through and see if it exists...if it does we'll update.
-	// for e := pm.storage[index].Front(); e != nil; e = e.Next() {
-	// 	var storedKvp = e.Value.(KeyValuePair[T, V])
-	// 	if storedKvp.Key == key {
-	// 		e.Value = kvp
-	// 		return
-	// 	}
-	// }
-
-	// otherwise we need to add it in.
-	//pm.storage[index].PushBack(kvp)
+	// bump the length.
 	pm.length += 1
-
 }

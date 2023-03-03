@@ -188,3 +188,180 @@ Ran 10 tests in 0.002s
 
 OK
 ```
+
+## In Go
+This is a bit trickier. My first struggle was just trying to figure out how to hash any '[comparable](https://go.dev/blog/comparable)' key type. Go does this for us with the built in map type, however, they don't expose the actual hashing part to us.  It [looks](https://github.com/golang/go/issues/21195) like I'm not the only one that has tried to search for a way to do this.  I found some [workarounds](https://www.dolthub.com/blog/2022-12-19-maphash/), including a library called [hashstructure](https://github.com/mitchellh/hashstructure). I decided I'd try hashstructure and see how things go.
+
+Let's define our basic map type. I'd like to create a structure that can behave somewhat like a map, and has a generic interface to support keys that are comparable, and any value.  We'll need the map itself, as well as a key value pair structure to store a key and value:
+
+```go
+// defines a key value pair to store in our map.
+type KeyValuePair[T comparable, V any] struct {
+	Key   T
+	Value V
+}
+
+type PhilipMap[T comparable, V any] struct {
+	// underlying storage/buckets.
+	storage [][]KeyValuePair[T, V]
+
+	// indicates how many items are currently in the map.
+	length int
+}
+```
+
+I utilized the same 'seperate chaining' process as I did for the Python based map, so, the storage field is a list of lists containing key value pairs. While not nearly as sophisticated as the built in map type in Go, it was a bit easier for me to work with to at least get some working code up and running. 
+
+On to the hashing part. We can do a similar thing as we did for the Python based map, in that I delegated the hashing of the key to another component (in this case, hashstructure, for Python, the built in hash function).  Again, we need to calculate a hash value, and transform that to an index into our storage bucket:
+
+```go
+func calculateHashIndex[T comparable](key T, size int) int {
+	// delegate the actual hash generation to something else...
+	var hashValue, _ = hash.Hash(key, nil)
+	var six_four_size = uint64(size)
+
+	// and then convert that to an index into our underlying storage/bucket.
+	var index = hashValue % six_four_size
+	return int(index)
+}
+```
+
+Go is a bit pickier about types than Python is, so, I had to cast values appropriately.  
+
+In Python, I was able to implement the dunder methods so that you could get standard indexing/iteration/etc with my map, but, in Go, I don't think that's possible. There's no way as far as I can tell to implement some sort of operator overloading like in C++, C#, etc, or, implement dunder methods like in Python. So, we need our own contract!  We need some basic things in our map:
+- look up a value by key
+- add/update a key value pair
+- iterate over items
+- remove a key/value by key
+- check for containment
+- get the number of items in our collection
+
+We can translate these to Go methods such as:
+- Get(key T) (bool, V)
+- Put(key T, value V)
+- Items() <-chan KeyValuePair[T, V]
+- Delete(key T)
+- Length() int
+
+Some of these are more interesting than others, but, I guess let's start with inserting/updating items first as we won't be able to delete or get anything if there are no items in the collection.
+
+For adding/updating a key value pair in our map, the process is pretty similar to what we did in Python:
+
+- calculate an index into our bucket
+- if we find an item in the bucket at the calculated index whose key matches the input key, we update it
+- otherwise, we increase the size of our bucket at the particular index by adding in the new key value pair
+
+We can see this below:
+
+```go
+func (pm *PhilipMap[T, V]) Put(key T, value V) {
+	var index = calculateHashIndex(key, len(pm.storage))
+
+	// we need to insert the key value pair, or, if it exists, update it.
+	var currentBucketLength = len(pm.storage[index])
+	for idx := 0; idx < currentBucketLength; idx += 1 {
+		if pm.storage[index][idx].Key == key {
+			// update the value at the appropriate index.
+			pm.storage[index][idx].Value = value
+			return
+		}
+	}
+
+	// append to the slice in this case.
+	var kvp = KeyValuePair[T, V]{Key: key, Value: value}
+	pm.storage[index] = append(pm.storage[index], kvp)
+
+	// bump the length.
+	pm.length += 1
+}
+```
+
+I'm new to Go, but, I believe "Put()" is a struct 'method'.  I say 'method' because I think in Go, our "Put()" function is a function that 'receives' a pointer to a *PhilipMap* struct instance.  I elected to do this because I want to mutate the contents of the struct from within the function; I don't want the struct copied.  Go automatically handles the fact that this is a reference rather than a value; we didn't have to use the & operator.  
+
+Another thing to note that is that the bucket, *storage*, contains slices.  In the above snippet, we use build in "append()" function to dynamically add the new key value pair to our slice. 
+
+The "Get()" and "Delete()" instance methods are very similar, so, I'll skip further explanation of them. In the next section, we'll discuss iteration.
+
+### Iterating over keys and values
+**Disclaimer:** this next part is probably overkill, but, I wanted to experiment. In my first crack at this, I discovered that I was leaking goroutines under certain conditions.  In particular, if I broke out of my loop early with an unbuffered channel (or, with a buffered one that was too small), the leak would occur. In any case, I went down this path as it was a good way to start learning about channels, goroutines, goroutine leaks, etc. I'm sure it's not nearly as performant if as simply copying all the keys and values into a slice, however, again, a *PhilipMap* is not for production use; it's intended for my own educational purposes (and possibly others if they ever stumble upon this).
+
+What is a bit different than the Python *PhilipMap* is the way we can provide an iterater through the key value pairs in the collection. Python, and other languages like C#, make use of [generators and *yield*](https://realpython.com/introduction-to-python-generators/) to efficiently allow for iteration over collections/data sets. Go didn't seem to have a built in *yield* construct that would allow for utilization with 'ranging' over a collection. I wanted to support the *range* key word as that is the idiomatic way a programmer would iterate over keys and values in a standard map. So, I decided to experiment with [channels](https://gobyexample.com/channels).  They reminded me a bit of IObservable<T> if you've ever tried [Reactive Extensions in C#](https://github.com/dotnet/reactive) (or [RxJS](https://rxjs.dev/)).  
+
+In Go, you can 'range' over slices, channels, arrays and maps.  I wanted to experiment with channels as it's pretty cool that a construct like this is baked into the language itself:
+
+```go
+func (pm *PhilipMap[T, V]) Items() <-chan KeyValuePair[T, V] {
+	// create a buffered channel the size of the total number of keys/values
+	out := make(chan KeyValuePair[T, V], pm.Length())
+	go func() {
+		// go through each bucket
+		var numberOfBuckets = len(pm.storage)
+		for idx := 0; idx < numberOfBuckets; idx += 1 {
+			// and publish the key value pairs, if any, in each bucket to the channel.
+			var bucketLength = len(pm.storage[idx])
+			for bucketIdx := 0; bucketIdx < bucketLength; bucketIdx += 1 {
+				var storedKvp = pm.storage[idx][bucketIdx]
+				out <- storedKvp
+			}
+		}
+		
+		close(out)
+	}()
+
+	return out
+}
+```
+
+The "Items()" function "sends" values to our send only conduit/channel, *out*, in a [goroutine](https://go.dev/tour/concurrency/1). Our channel is buffered up to the current length of the map - meaning the sender can immediately start pushing values out to that channel. In our case, the receiver is range:
+
+```go
+for kvp := range pm.Items() {
+	// do something with kvp
+}
+```
+
+The buffering aids in preventing a leak that could occur when a 'sending' goroutine is blocked on a channel that either hasn't been 'read enough' (e.g. it has a buffer size of say 2, and it's filled up. The sending routine will be blocked) or is unbuffered to begin with.  See [here](https://stackoverflow.com/questions/63235829/what-happens-when-you-break-the-for-statement-with-a-range-channel) and [here](https://www.ardanlabs.com/blog/2018/11/goroutine-leaks-the-forgotten-sender.html) for some more information on that. Uber has a nice [library](https://github.com/uber-go/goleak) for detecting go routine leaks.  If you take the buffering away, you can see the affect it has upon early exit from a range loop:
+
+```shell
+go test
+--- FAIL: TestItemsIteration (0.45s)
+    philipmap_test.go:52: found unexpected goroutines:
+        [Goroutine 22 in state chan send, with github.com/philip-3000/Practice/DataStructures/Maps.(*PhilipMap[...]).Items.func1 on top of the stack:
+        goroutine 22 [chan send]:
+        github.com/philip-3000/Practice/DataStructures/Maps.(*PhilipMap[...]).Items.func1()
+                /home/cabox/workspace/interview-prep/DataStructures/Maps/philip_map.go:88 +0xa5
+        created by github.com/philip-3000/Practice/DataStructures/Maps.(*PhilipMap[...]).Items
+                /home/cabox/workspace/interview-prep/DataStructures/Maps/philip_map.go:80 +0xaa
+        ]
+FAIL
+exit status 1
+FAIL    github.com/philip-3000/Practice/DataStructures/Maps     0.448s
+```
+
+There are apparently ways to 'cancel' (this sounds similar to C#'s [Task cancellation](https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-cancellation)) or signal completion, however, I felt like I wasn't quite there yet, so, I went with a buffer big enough to hold our items and let the runtime clean up.
+
+You can run the simple suite of unit tests by simply asking go on the shell:
+
+```shell
+go test
+PASS
+ok      github.com/philip-3000/Practice/DataStructures/Maps     0.003s
+```
+
+# Closing Thoughts
+I'd like to perhaps modify this one day to experiment with open addressing/resizing. Going back to the basics with this exercise is interesting as you learn some things perhaps you forgot, or, just new things in general, especially if you are trying this out in a new language like I did with Go.  You also get a sense of how much thought and care goes into these standard library structures/functions. 
+ 
+Some new tricks I picked up with Go:
+- learning how to utilize Generics in Go
+- learning how to implement methods that receive a struct
+- learning about channels, goroutines and goroutine leaks
+- learning how to write unit tests in Go
+
+If you actually made it this far, thanks for reading! 
+
+
+
+
+
+
+
