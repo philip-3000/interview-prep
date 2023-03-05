@@ -28,32 +28,37 @@ type TestCase struct {
 	T string
 	Expected bool
 }
+
 type TestCases struct {
 	Tests []TestCase
 }
 
 func isAnagram(s string, t string) bool {
 
+	// since the input consists of just lower case ascii letters, we know that if the lengths are different,
+	// they cannot be anagrams. 
 	if len(s) != len(t) {
 		return false
 	}
 
-	var frequency_s = map[byte]int{}
-	var frequency_t = map[byte]int{}
-
+	// start building the frequency maps for s and t
+	// note that when we index into the string in Go, we'll get the ascii byte value.  
+	// i.e. "hello"[1] => 101 for the ascii value of the letter e.
+	var frequencyOfCharsInS = map[byte]int{}
+	var frequencyOfCharsInT = map[byte]int{}
 	for i := 0; i < len(s); i++ {
 		var s_i = s[i]
 		var t_i = t[i]
 
-		frequency_s[s_i] += 1
-		frequency_t[t_i] += 1
+		frequencyOfCharsInS[s_i] += 1
+		frequencyOfCharsInT[t_i] += 1
 	}
 
-	// no go through the frequency maps.
-	for characterInS, frequencyInS  := range frequency_s {
+	// now go through the frequency maps.
+	for characterInS, frequencyInS  := range frequencyOfCharsInS {
 
 		// first check for containment
-		frequencyInT, ok := frequency_t[characterInS]
+		frequencyInT, ok := frequencyOfCharsInT[characterInS]
 		if !ok {
 			return false
 		}
@@ -64,8 +69,8 @@ func isAnagram(s string, t string) bool {
 		}
 	}
 
+	// if all the checks pass, we're good to 'go'...
 	return true
-
 
 }
 
@@ -87,8 +92,6 @@ func main() {
 		var t = test.T
 		var expected = test.Expected
 		var result = isAnagram(s,t)
-		
-		// a bit more work here for Go
 		var passed = result == expected
 		fmt.Printf("s: %v\nt: %v\nResult: %v\nExpected: %v\nPassed: %v\n\n", s, t, result, expected, passed)
 	}
