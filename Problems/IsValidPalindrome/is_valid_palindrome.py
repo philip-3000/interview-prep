@@ -12,60 +12,21 @@ Output: true
 Explanation: "amanaplanacanalpanama" is a palindrome.
 """
 
+import json
 
-# will need to add readme...for now I am trying the solution first.
-
-def is_palindrome_v1(s:str) -> bool:
-
-    # let's strip out all the unecessary stuff, then put it into an array.
-    sanitized_input = []
-    for character in s:
-        if character.isalnum():
-            sanitized_input.append(character.lower())
-        
-    # we can check the sanitized input array in place with two pointers.
-    left = 0
-    right = len(sanitized_input) - 1
-
-    # the left and right don't need to cross.
-    while left < right:
-        if sanitized_input[left] != sanitized_input[right]:
-            return False
-
-        # move left to the right and right to the left.
-        left += 1
-        right -= 1
-    
-    return True
-
-    
-
-    # # ok now that we have the sanitized input, we need to check if the reverse of sanitized input is just sanitized input.
-    # # we can also just do this with 2 pointers. one at the left, and one at the right
-    # left = 0
-    # right = len(sanitized_input) - 1
-
-    # while left < right:
-    #     if sanitized_input[left] != sanitized_input[right]:
-    #         return False
-        
-    #     # increment left, decrement right
-    #     left += 1
-    #     right -= 1
-
-    # # if we get here it was a palindrome.
-    # return True
 
 def is_palindrome(s:str) -> bool:
-    # we can make a micro optimization here.  it won't affect the overall run time really, but,
-    # instead of pre sanitizing into a list, we can do ths in one pass with two pointers.
-    # the key point is we just have to seek past the non alphanumerical characters.
-    # we can do this with two inner loops or continue statements.
+    # loop through from the left and right, comparing the string
+    # and the left and right, but, skip over non alphanumeric 
+    # characters.
     left = 0
     right = len(s) - 1
 
     while left < right:
-        # so, before we can compare s at left and right, we need to make sure left and right aren't positioned at crap.
+        # so, before we can compare s at left and right, 
+        # we need to make sure left and right aren't positioned at 
+        # characters that are not alphanumeric. If they are, we need to
+        # move them (but only until they don't cross)
         while not s[left].isalnum() and left < right:
             left += 1
 
@@ -84,28 +45,12 @@ def is_palindrome(s:str) -> bool:
 
 
 if __name__ == "__main__":
-    input = "A man, a plan, a canal: Panama"
-    result = is_palindrome_v1(s=input)
-    print(f"Input: {input}\nIs Palindrome: {result}\n")
-
-    # this is vacuously a palindrome
-    input = "   "
-    result = is_palindrome_v1(s=input)
-    print(f"Input: {input}\nIs Palindrome: {result}\n")
-
-    input =  "race a car"
-    result = is_palindrome_v1(s=input)
-    print(f"Input: {input}\nIs Palindrome: {result}\n")
-
-    input = "A man, a plan, a canal: Panama"
-    result = is_palindrome(s=input)
-    print(f"Input: {input}\nIs Palindrome (v2): {result}\n")
-
-    # this is vacuously a palindrome
-    input = "   "
-    result = is_palindrome(s=input)
-    print(f"Input: {input}\nIs Palindrome (v2): {result}\n")
-
-    input =  "race a car"
-    result = is_palindrome(s=input)
-    print(f"Input: {input}\nIs Palindrome (v2): {result}\n")
+    with open("test_cases.json", mode='r', encoding="utf-8-sig") as file:
+        text = file.read() 
+        test_cases = json.loads(text)
+        for test in test_cases['tests']:
+            s = test['s']
+            expected = test['expected']
+            result = is_palindrome(s=s)
+            passed = expected == result
+            print(f"s: {s}\nResult: {result}\nExpected: {expected}\nPassed: {passed}\n\n")

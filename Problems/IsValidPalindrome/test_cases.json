@@ -1,0 +1,29 @@
+{
+    "tests" : [
+        {
+            "s" : "A man, a plan, a canal: Panama",
+            "expected" : true
+        },
+        {
+            "s" : "bob",
+            "expected" : true
+        },
+        {
+            "s" : "         ",
+            "expected" : true
+        },
+        {
+            "s" : "race a car",
+            "expected" : false
+        },
+        {
+            "s" : "RACE.... car",
+            "expected" : true
+        },
+        {
+            "s" : "a",
+            "t" : "a",
+            "expected" : true
+        }
+    ]
+}
